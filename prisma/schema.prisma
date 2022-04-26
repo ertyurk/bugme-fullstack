@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id             String      @id @default(uuid())
+  name           String
+  email          String      @unique
+  hashedPassword String
+  is_active      Boolean     @default(true)
+  resources      resources[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  apps           apps[]
+}
+
+model workspaces {
+  id        String      @id @default(uuid())
+  name      String      @unique
+  apiSecret String      @unique
+  resources resources[]
+  apps      apps[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model resources {
+  id          String     @id @default(uuid())
+  users       users      @relation(fields: [userId], references: [id])
+  userId      String
+  workspaces  workspaces @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model apps {
+  id          String     @id @default(uuid())
+  name        String
+  platform    String
+  users       users      @relation(fields: [userId], references: [id])
+  userId      String
+  workspaces  workspaces @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+  bundle_id   String     @unique
+  bugs        bugs[]
+  slack       slack[]
+  clickup     clickup[]
+  jira        jira[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model bugs {
+  id                  String         @id @default(uuid())
+  title               String
+  description         String
+  platform            String
+  os                  String
+  device              String
+  app_version         String
+  network             String
+  screen              String
+  timezone            String
+  location            String
+  locale              String
+  battery             String
+  low_power_mode      Boolean        @default(false)
+  usedStorage         String
+  auth_to_open_device Boolean        @default(false)
+  resolution          String
+  orientation         String         @default("Portrait")
+  location_access     Boolean        @default(false)
+  notification_access Boolean        @default(false)
+  media               String[]
+  reporter_email      String
+  console_log         String
+  user_data           String
+  apps                apps           @relation(fields: [appId], references: [id])
+  appId               String
+  integrations        integrations[]
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+}
+
+model integrations {
+  id                String   @id @default(uuid())
+  bugs              bugs     @relation(fields: [bugId], references: [id])
+  bugId             String
+  integrated_to     String
+  integration_to_id String
+  proof             String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model clickup {
+  id              String   @id @default(uuid())
+  clientId        String
+  team_token      String
+  code            String
+  auth_key        String
+  assigned_user   String
+  assigned_status String
+  task_list_id    String
+  task_label      String
+  apps            apps     @relation(fields: [appId], references: [id])
+  appId           String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model jira {
+  id          String   @id @default(uuid())
+  issue_type  String
+  email       String
+  project_key String
+  base_url    String
+  api_key     String
+  apps        apps     @relation(fields: [appId], references: [id])
+  appId       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model slack {
+  id        String   @id @default(uuid())
+  webhook   String
+  status    Boolean
+  apps      apps     @relation(fields: [appId], references: [id])
+  appId     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
