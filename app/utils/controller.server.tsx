@@ -76,7 +76,6 @@ export async function createBug(bug: any) {
 }
 
 //demo function
-export async function bugMediaHandler(params:any) {
-  return {}
+export async function mediaUploadHandler(params: any) {
+  return {};
 }
-

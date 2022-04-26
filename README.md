@@ -1,7 +1,6 @@
-# Welcome to Remix!
+# BUGME - Bug orchestration tool 
 
-- [Remix Docs](https://remix.run/docs)
-
+ This is a fullstack version of [bugme](https://github.com/ertyurk/bugme-backend) to learn [Remix](https://remix.run) framework
 ## Development
 
 You'll need to run two terminals (or bring in a process manager like concurrently/pm2-dev if you like):
